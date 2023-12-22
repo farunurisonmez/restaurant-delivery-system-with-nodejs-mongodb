@@ -1,0 +1,20 @@
+{
+  "name": "food-ordering-platform-case",
+  "version": "1.0.0",
+  "description": "A Node.js RESTFul API for Food Ordering Platform",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/farunurisonmez/Food-Ordering-Platform-Case.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/farunurisonmez/Food-Ordering-Platform-Case/issues"
+  },
+  "homepage": "https://github.com/farunurisonmez/Food-Ordering-Platform-Case#readme"
+}
