@@ -4,6 +4,7 @@
   "description": "A Node.js RESTFul API for Food Ordering Platform",
   "main": "app.js",
   "scripts": {
+    "dev": "nodemon --exec ts-node src/app.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -16,5 +17,10 @@
   "bugs": {
     "url": "https://github.com/farunurisonmez/Food-Ordering-Platform-Case/issues"
   },
-  "homepage": "https://github.com/farunurisonmez/Food-Ordering-Platform-Case#readme"
+  "homepage": "https://github.com/farunurisonmez/Food-Ordering-Platform-Case#readme",
+  "devDependencies": {
+    "@types/node": "^20.10.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  }
 }
