@@ -64,6 +64,7 @@ try {
             res.end(JSON.stringify(errorMessages));
           } else {
             res.statusCode = 500;
+            console.log(error)
             res.end(JSON.stringify({ error: 'Internal Server Error' }));
           }
     }
@@ -75,9 +76,10 @@ try {
       const nearbyRestaurants = await Restaurant.aggregate([
         {
           $geoNear: {
-            near: [39.93, 32.85],
+            near: { type: "Point", coordinates: [39.93, 32.85] },
             distanceField: 'distance',
-            spherical: false,
+            spherical: true,
+            key: 'location.coordinates',
           },
         },
         {
@@ -99,6 +101,59 @@ try {
       console.log(nearbyRestaurants)
       res.end(JSON.stringify(nearbyRestaurants));
     } catch(error) {
+      res.statusCode = 500;
+      console.log(error)
+      res.end(JSON.stringify({ error:'Internal Server Error' }));
+    }
+  } else if (req.method === 'GET' && pathname.startsWith('/api/latest-reviews-restaurants')){
+    try{
+      const usersLastReviews = await Restaurant.aggregate([
+        {
+          $unwind: '$reviews',
+        },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'reviews.userId',
+            foreignField: '_id',
+            as: 'user',
+          },
+        },
+        {
+          $unwind: '$user',
+        },
+        {
+          $match: {
+            'user.gender': 'Erkek',
+          },
+        },
+        {
+          $sort: {
+            'reviews.createdAt': -1,
+            'user.age': 1,
+          },
+        },
+        {
+          $group: {
+            _id: '$user._id',
+            userName: { $first: '$user.name' },
+            userAge: { $first: '$user.age' },
+            reviews: { $push: '$reviews' },
+          },
+        },
+        {
+          $sort: {
+            userAge: 1,
+          },
+        },
+        {
+          $limit: 20,
+        },
+      ]);
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      console.log(usersLastReviews)
+      res.end(JSON.stringify(usersLastReviews));
+    }catch(error){
       res.statusCode = 500;
       console.log(error)
       res.end(JSON.stringify({ error:'Internal Server Error' }));

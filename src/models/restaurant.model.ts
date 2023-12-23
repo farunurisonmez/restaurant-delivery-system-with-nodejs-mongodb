@@ -8,8 +8,7 @@ export interface IMenu {
 }
 
 export interface ILocation {
-  latitude: number;
-  longitude: number;
+  coordinates: [number, number];
 }
 
 export interface IAddress {
@@ -54,8 +53,11 @@ const addressSchema = new Schema<IAddress>({
 });
 
 const locationSchema = new Schema<ILocation>({
-  latitude: { type: Number, required: [true, 'Latitude is required.'] },
-  longitude: { type: Number, required: [true, 'Longitude is required.'] },
+    coordinates: {
+      type: [Number], 
+      index: '2dsphere',
+      required: [true, 'Coordinates are required.'],
+    },
 });
 
 locationSchema.index({ coordinates: '2dsphere' });
