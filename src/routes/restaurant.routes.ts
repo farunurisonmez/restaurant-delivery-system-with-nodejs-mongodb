@@ -68,10 +68,43 @@ try {
           }
     }
   } else if (req.method === 'GET' && pathname.startsWith('/api/restaurants/')) {
-
     const restaurantId = pathname.split('/').pop();
     res.end(JSON.stringify({ message: `Restaurant details for restaurant ID ${restaurantId}` }));
-  } else {
+  } else if (req.method === 'GET' && pathname.startsWith('/api/nearby-restaurants')){
+    try{
+      const nearbyRestaurants = await Restaurant.aggregate([
+        {
+          $geoNear: {
+            near: [39.93, 32.85],
+            distanceField: 'distance',
+            spherical: false,
+          },
+        },
+        {
+          $match: {
+            description: /lahmacun/i,
+          },
+        },
+        {
+          $sort: {
+            distance: 1,
+          },
+        },
+        {
+          $limit: 5,
+        },
+      ]);
+
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      console.log(nearbyRestaurants)
+      res.end(JSON.stringify(nearbyRestaurants));
+    } catch(error) {
+      res.statusCode = 500;
+      console.log(error)
+      res.end(JSON.stringify({ error:'Internal Server Error' }));
+    }
+  }
+  else {
     res.statusCode = 404;
   }
 };

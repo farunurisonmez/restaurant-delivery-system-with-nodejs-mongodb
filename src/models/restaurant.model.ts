@@ -58,6 +58,8 @@ const locationSchema = new Schema<ILocation>({
   longitude: { type: Number, required: [true, 'Longitude is required.'] },
 });
 
+locationSchema.index({ coordinates: '2dsphere' });
+
 const reviewSchema = new Schema<IReview>({
     userId: { type: mongoose.Schema.Types.ObjectId, required: true },
     orderId: { type: mongoose.Schema.Types.ObjectId, required: true },
