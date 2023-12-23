@@ -1,5 +1,6 @@
 const { parse } = require('url');
 import User from '../models/user.model';
+import ParseRequestBody from '../utils/parseRequestBody';
 
 const handleRestaurantRoutes = async (req:any, res:any) => {
 
@@ -11,7 +12,7 @@ const handleRestaurantRoutes = async (req:any, res:any) => {
 
   } else if (req.method === 'POST' && pathname === '/api/user') {
     try{
-        const requestBody = await parseRequestBody(req);
+        const requestBody = await ParseRequestBody(req);
         const createdRestaurant = await User.create(requestBody);
         res.statusCode = 201;
         res.setHeader('Content-Type', 'application/json');
@@ -48,27 +49,5 @@ const handleRestaurantRoutes = async (req:any, res:any) => {
   }
 };
 
-const parseRequestBody = (req:any) => {
-    return new Promise((resolve, reject) => {
-      let body = '';
-
-      req.on('data', (chunk:any) => {
-      body += chunk.toString();
-    });
-  
-      req.on('end', () => {
-        try {
-          const parsedBody = JSON.parse(body);
-          resolve(parsedBody);
-        } catch (error) {
-          reject(error);
-        }
-      });
-  
-      req.on('error', (error:any) => {
-        reject(error);
-      });
-    });
-  };
 
 module.exports = handleRestaurantRoutes;
