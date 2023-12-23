@@ -159,6 +159,48 @@ try {
       res.end(JSON.stringify({ error:'Internal Server Error' }));
     }
   }
+  else if(req.method === 'GET' && pathname.startsWith('/api/filtered-restaurants')){
+    try{
+      const filteredRestaurants = await Restaurant.aggregate([
+        {
+          $addFields: {
+            averageRating: { $avg: '$averageRating' },
+          },
+        },
+        {
+          $match: {
+            $or: [
+              { types: { $regex: /Fast Food/i } },
+              { types: { $regex: /Ev Yemekleri/i } },
+              { description: { $regex: /fast/i } },
+            ],
+            averageRating: { $gte: 4 },
+          },
+        },
+        {
+          $project: {
+            name: 1,
+            types: 1,
+            description: 1,
+            averageRating:1,
+            _id: 0
+          },
+        },
+        {
+          $sort: {
+            averageRating: 1,
+          },
+        },
+      ]);
+    
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(filteredRestaurants));
+    }catch(error){
+      res.statusCode = 500;
+      console.log(error)
+      res.end(JSON.stringify({ error:'Internal Server Error' }));
+    }
+  }
   else {
     res.statusCode = 404;
   }
